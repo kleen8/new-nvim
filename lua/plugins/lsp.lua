@@ -26,7 +26,22 @@ return {
         "williamboman/mason-lspconfig.nvim",
         dependencies = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
         opts = {
-            ensure_installed = { "jdtls", "gopls", "lua_ls", "svelte" },
+            ensure_installed = {  
+                "eslint",
+                "tailwindcss",
+                "jsonls",
+                "ts_ls",
+
+                -- Golang & DevOps
+                "gopls",
+                "dockerls",
+                "helm_ls",
+                "yamlls",
+                "bashls",
+                "terraformls",
+
+                -- Lua (for Neovim config)
+                "lua_ls",},
             handlers = {
                 -- Default handler for every server *except* those you override later
                 function(server)
