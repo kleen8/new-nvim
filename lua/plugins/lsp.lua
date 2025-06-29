@@ -73,7 +73,14 @@ return {
                 -- Other nice settings
                 lint_on_save = "file",
             })
-
+            local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                pattern = "*.go",
+                callback = function()
+                    require('go.format').goimports()
+                end,
+                group = format_sync_grp,
+            })
             -- Keymaps for testing
             vim.keymap.set("n", "<leader>t", ":GoTest<CR>", { desc = "Run Go Tests in file" })
             vim.keymap.set("n", "<leader>T", ":GoTestFunc<CR>", { desc = "Run Go Test function" })
