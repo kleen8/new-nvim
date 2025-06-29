@@ -55,12 +55,15 @@ return {
             end
         end,
     },
-    {
-        -- Helper to configure DAP for Go
-        "leoluz/nvim-dap-go",
-        dependencies = { "mfussenegger/nvim-dap" },
-        config = function()
-            require("dap-go").setup()
-        end,
-    },
+    -- {
+    --     -- Helper to configure DAP for Go
+    --     "leoluz/nvim-dap-go",
+    --     dependencies = { "mfussenegger/nvim-dap" },
+    --     config = function()
+    --         require("dap-go").setup({
+    --             print("Setting up dap-go"),
+    --             setup_gopls = false,
+    --         })
+    --     end,
+    -- },
 }
