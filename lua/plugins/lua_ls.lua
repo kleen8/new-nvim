@@ -1,9 +1,10 @@
--- lua/plugins/lua_ls.lua   (rename the file or keep the same name)
+-- lua/plugins/lua_ls.lua
 return {
   "neovim/nvim-lspconfig",
-  ft = "lua",                             -- load only when a Lua file is opened
+  ft = "lua", -- Load only when a Lua file is opened
   config = function()
-    require("lspconfig").lua_ls.setup({
+    -- 1. Define the configuration for lua_ls
+    vim.lsp.config('lua_ls', {
       settings = {
         Lua = {
           runtime = { version = "LuaJIT" },
@@ -11,6 +12,8 @@ return {
         },
       },
     })
+
+    -- 2. Enable the lua_ls server
+    vim.lsp.enable('lua_ls')
   end,
 }
-

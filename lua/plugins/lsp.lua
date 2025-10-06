@@ -4,7 +4,18 @@ return {
     { "williamboman/mason.nvim", build = ":MasonUpdate", config = true },
 
     -- nvim-lspconfig (we will configure this directly now)
-    { "neovim/nvim-lspconfig" },
+    {
+        "neovim/nvim-lspconfig",
+        config = function()
+            -- This autocommand tells Neovim to treat .avsc files as JSON
+            vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+                pattern = "*.avsc",
+                callback = function()
+                    vim.bo.filetype = "json"
+                end,
+            })
+        end,
+    },
 
     -- mason-lspconfig: downloads servers & wires them to lspconfig
     {
@@ -52,44 +63,65 @@ return {
 
             -- Loop through the installed servers and configure them
             for _, server_name in ipairs(servers) do
+                -- This table holds the settings for the current server
                 local opts = {
+                    on_attach = on_attach,
                     capabilities = capabilities,
-                    on_attach = function(client, bufnr)
-                        -- Your on_attach function here. Example keymaps:
-                        print("Lsp attached: " .. client.name)
-                        vim.keymap.set('n', 'K', vim.lsp.buf.hover, { buffer = bufnr })
-                        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { buffer = bufnr })
-                        vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { buffer = bufnr })
-                    end,
                 }
 
-                -- === Special settings for Lua ===
+                -- === Add special settings for specific servers ===
                 if server_name == "lua_ls" then
                     opts.settings = {
                         Lua = {
-                            diagnostics = { globals = {'vim'} }
-                        }
+                            diagnostics = { globals = { 'vim' } },
+                        },
                     }
                 end
 
-                lspconfig[server_name].setup(opts)
+                if server_name == "yamlls" then
+                    opts.filetypes = { "yaml" }
+                end
+
+                if server_name == "jsonls" then
+                    opts.filetypes = { "json", "jsonc", "avsc" }
+                end
+
+                -- 1. Configure the server with its settings
+                vim.lsp.config(server_name, opts)
+
+                -- 2. Enable the server
+                vim.lsp.enable(server_name)
             end
         end,
     },
+
     -- === ADD THIS NEW PLUGIN FOR GO ===
     {
         "ray-x/go.nvim",
         dependencies = { "ray-x/guihua.lua", "neovim/nvim-lspconfig" },
         config = function()
             require("go").setup({
-                -- Tell go.nvim NOT to set up lspconfig, as you've done it yourself above.
-                -- This is the key to avoiding conflicts.
                 lsp_cfg = true,
-                lsp_on_attach = true,
-                -- Let go.nvim handle DAP configuration for Go
+                lsp_keymaps = false,
                 dap_cfg = true,
-                -- Other nice settings
                 lint_on_save = "file",
+                diagnostic = {  -- set diagnostic to false to disable vim.diagnostic.config setup,
+                    -- true: default nvim setup
+                    hdlr = false, -- hook lsp diag handler and send diag to quickfix
+                    underline = true,
+                    virtual_text = { spacing = 2, prefix = '' }, -- virtual text setup
+                    signs = {'', '', '', ''},  -- set to true to use default signs, an array of 4 to specify custom signs
+                    update_in_insert = true,
+                },
+                -- if you need to setup your ui for input and select, you can do it here
+                -- go_input = require('guihua.input').input -- set to vim.ui.input to disable guihua input
+                -- go_select = require('guihua.select').select -- vim.ui.selecpt to disable guihua select
+                lsp_document_formatting = true,
+                -- set to true: use gopls to format
+                -- false if you want to use other formatter tool(e.g. efm, nulls)
+                lsp_inlay_hints = {
+                    enable = true, -- this is the only field apply to neovim > 0.10
+                },
             })
             local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
             vim.api.nvim_create_autocmd("BufWritePre", {
@@ -106,7 +138,6 @@ return {
         end,
         event = { "CmdlineEnter" },
         ft = { "go", "gomod" },
-        -- This will install delve, gofumpt, golangci-lint, etc.
         build = ':lua require("go.install").update_all_sync()',
     },
 
