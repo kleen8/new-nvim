@@ -31,8 +31,26 @@ return {
                 ensure_installed = servers,
             })
 
-            -- Now, configure each server with lspconfig
-            local lspconfig = require("lspconfig")
+        -- Common on_attach function for keymaps
+            local on_attach = function(client, bufnr)
+                print("LSP attached: " .. client.name)
+                vim.diagnostic.config({
+                    virtual_text = true,
+                    signs = true,
+                    underline = true,
+                    update_in_insert = false,
+                })
+
+                local opts = { buffer = bufnr, noremap = true, silent = true }
+                vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+                vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+                vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+            end
+
+            -- Get capabilities for nvim-cmp
+            capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+            -- Loop through the installed servers and configure them
             for _, server_name in ipairs(servers) do
                 local opts = {
                     capabilities = capabilities,
