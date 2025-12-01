@@ -46,8 +46,8 @@ return {
       },
       keymap = {
         -- These are fzf-lua's internal keymaps when FZF window is active
-        --["ctrl-d"] = "preview_page_down",
-        --["ctrl-u"] = "preview_page_up",
+        ["ctrl-d"] = "preview_page_down",
+        ["ctrl-u"] = "preview_page_up",
       },
       actions = {
         -- These are actions for results in FZF window
