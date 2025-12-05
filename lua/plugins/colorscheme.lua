@@ -98,6 +98,19 @@ return {
             set_hl(0, "PmenuSel", { bg = colors.selection, fg = "#ffffff", bold = true })
             set_hl(0, "PmenuSbar", { bg = "#031619" }) -- Scrollbar track
             set_hl(0, "PmenuThumb", { bg = colors.line_fg }) -- Scrollbar handle
+
+            set_hl(0, "FlashLabel", { bg = "#ff00ff", fg = "#ffffff", bold = true })
+            -- The "Match" is the word you searched for
+            -- We make this Gold/Yellow (like your search color)
+            set_hl(0, "FlashMatch", { bg = colors.search_bg, fg = "#000000" })
+
+            -- The "Backdrop" is everything else on screen (dimmed)
+            -- We make it a dull grey/blue so it fades away but is still readable
+            set_hl(0, "FlashBackdrop", { fg = "#606060" })
+
+            -- The "Current" match (if you used standard search)
+            set_hl(0, "FlashCurrent", { bg = colors.selection, fg = "#ffffff" })
+
         end
     }
 }
