@@ -1,22 +1,9 @@
--- return {
---    {
---         "rebelot/kanagawa.nvim",
---         lazy = false, -- make sure we load this during startup if it is your main colorscheme
---         priority = 1000, -- make sure to load this before all the other start plugins
---         config = function()
---             -- load the colorscheme here
---             vim.cmd.colorscheme("kanagawa-wave")
---         end,
---     },
--- }
-
-
 return {
+    -- 1. Theme
     {
         "alljokecake/naysayer-theme.nvim",
-        name = 'naysayer',
-        lazy = false, -- Load immediately so colors apply on startup
-        priority = 1000, -- Ensure it loads before other UI plugins
+        lazy = false,
+        priority = 1000,
         config = function()
             require('naysayer').setup({
                 variant = 'main',
@@ -55,20 +42,20 @@ return {
             -- Editor UI
             set_hl(0, "Normal", { bg = colors.bg, fg = colors.fg })
             set_hl(0, "NormalNC", { bg = colors.bg_inactive, fg = colors.fg })
-            set_hl(0, "Visual", { bg = colors.selection, fg = nil }) -- Bright blue selection
+            set_hl(0, "Visual", { bg = colors.selection, fg = nil })     -- Bright blue selection
             set_hl(0, "LineNr", { fg = colors.line_fg, bg = colors.bg }) -- Teal line numbers
-            set_hl(0, "CursorLine", { bg = colors.cursor_line }) -- Subtle line highlight
+            set_hl(0, "CursorLine", { bg = colors.cursor_line })         -- Subtle line highlight
             set_hl(0, "CursorLineNr", { fg = "#ffffff", bg = colors.cursor_line, bold = true })
 
             -- Syntax Highlights (Mapping Emacs variables to Neovim groups)
             set_hl(0, "Comment", { fg = colors.comment, italic = false })
             set_hl(0, "String", { fg = colors.string })
-            set_hl(0, "Constant", { fg = colors.constant }) -- Numbers/Constants
+            set_hl(0, "Constant", { fg = colors.constant })          -- Numbers/Constants
             set_hl(0, "Number", { fg = colors.constant })
-            set_hl(0, "Function", { fg = "#ffffff", bold = false }) -- Emacs 'functions' var
-            set_hl(0, "Keyword", { fg = "#ffffff", bold = false }) -- Emacs 'keywords' var
+            set_hl(0, "Function", { fg = "#ffffff", bold = false })  -- Emacs 'functions' var
+            set_hl(0, "Keyword", { fg = "#ffffff", bold = false })   -- Emacs 'keywords' var
             set_hl(0, "Statement", { fg = "#ffffff", bold = false }) -- Often maps to keywords
-            set_hl(0, "Type", { fg = "#8cde94" }) -- Emacs 'punctuation'/'type' var match
+            set_hl(0, "Type", { fg = "#8cde94" })                    -- Emacs 'punctuation'/'type' var match
 
             -- 3. SEARCH & MATCHING (New)
             -- 'Search' is for all matches, 'CurSearch' is the one under your cursor
@@ -96,7 +83,7 @@ return {
             -- 6. POPUP MENU (Autocomplete)
             set_hl(0, "Pmenu", { bg = "#031619", fg = colors.fg })
             set_hl(0, "PmenuSel", { bg = colors.selection, fg = "#ffffff", bold = true })
-            set_hl(0, "PmenuSbar", { bg = "#031619" }) -- Scrollbar track
+            set_hl(0, "PmenuSbar", { bg = "#031619" })       -- Scrollbar track
             set_hl(0, "PmenuThumb", { bg = colors.line_fg }) -- Scrollbar handle
 
             set_hl(0, "FlashLabel", { bg = "#ff00ff", fg = "#ffffff", bold = true })
@@ -110,7 +97,95 @@ return {
 
             -- The "Current" match (if you used standard search)
             set_hl(0, "FlashCurrent", { bg = colors.selection, fg = "#ffffff" })
-
         end
+    },
+
+    -- 2. Status Line
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" }, -- For filetype icons
+        config = function()
+            require("lualine").setup({
+                options = {
+                    -- You can change the theme here.
+                    -- Available themes: https://github.com/nvim-lualine/lualine.nvim/blob/master/THEMES.md
+                    theme = "auto",
+                    icons_enabled = true,
+                    component_separators = { left = '', right = '' },
+                    section_separators = { left = '', right = '' },
+                    disabled_filetypes = {
+                        statusline = {},
+                        winbar = {},
+                    },
+                    ignore_focus = {},
+                    always_divide_middle = true,
+                    globalstatus = false,
+                    refresh = {
+                        statusline = 1000,
+                        tabline = 1000,
+                        winbar = 1000,
+                    }
+                },
+                sections = {
+                    -- Left side of the statusline
+                    lualine_a = { 'mode' },
+                    lualine_b = {
+                        'branch',     -- This is the Git branch component
+                        'diff',       -- This shows added/modified/removed lines
+                        'diagnostics' -- Errors/warnings from your LSP
+                    },
+                    lualine_c = { 'filename' },
+
+                    -- Right side of the statusline
+                    lualine_x = { 'encoding', 'fileformat', 'filetype' },
+                    lualine_y = { 'progress' },
+                    lualine_z = { 'location' }
+                },
+                inactive_sections = {
+                    lualine_a = {},
+                    lualine_b = {},
+                    lualine_c = { 'filename' },
+                    lualine_x = { 'location' },
+                    lualine_y = {},
+                    lualine_z = {}
+                },
+                tabline = {},
+                winbar = {},
+                inactive_winbar = {},
+                extensions = {}
+            })
+        end,
+    },
+    -- 3. Visual Rename
+    {
+        "smjonas/inc-rename.nvim",
+        config = true,
+    },
+
+    -- 4. TODO Highlighting
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "BufReadPost",
+        config = true,
+        keys = {
+            { "<leader>st", "<cmd>TodoFzf<cr>", desc = "Search TODOs" },
+        },
+    },
+
+    {
+        "j-hui/fidget.nvim",
+        opts = {}, -- default UI is good
+        event = "LspAttach",
+    },
+
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        opts = {
+            -- For more configuration options, consult the plugin's documentation.
+            -- Example: Change the indentation character
+            -- indent = { char = "▏" },
+        },
     }
 }

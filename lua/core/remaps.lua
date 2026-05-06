@@ -13,10 +13,10 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- next greatest remap ever : asbjornHaland
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
-vim.keymap.set({"n", "v"}, "<leader>d", "\"_d")
+vim.keymap.set({ "n", "v" }, "<leader>d", "\"_d")
 
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
@@ -38,6 +38,12 @@ vim.keymap.set(
 
 vim.keymap.set(
     "n",
+    "<leader>er",
+    "oif err != nil {<CR>}<Esc>Oreturn nil, err<Esc>"
+)
+
+vim.keymap.set(
+    "n",
     "<leader>ea",
     "oassert.NoError(err, \"\")<Esc>F\";a"
 )
@@ -53,5 +59,3 @@ vim.keymap.set(
     "<leader>el",
     "oif err != nil {<CR>}<Esc>O.logger.Error(\"error\", \"error\", err)<Esc>F.;i"
 )
-
-

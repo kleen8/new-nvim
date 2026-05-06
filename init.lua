@@ -4,13 +4,20 @@ require("core.set")
 
 local autocmd = vim.api.nvim_create_autocmd
 
+autocmd("FileType", {
+    pattern = { "go", "lua", "javascript", "typescript", "yaml", "bash" },
+    callback = function(args)
+        pcall(vim.treesitter.start, args.buf)
+    end,
+})
+
 autocmd('LspAttach', {
     callback = function(e)
         local opts = { buffer = e.buf }
         vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
         vim.keymap.set("n", "gv", function()
-            vim.cmd("vsplit")          -- 1. Create the split
-            vim.lsp.buf.definition()   -- 2. Jump to definition in the new split
+            vim.cmd("vsplit")        -- 1. Create the split
+            vim.lsp.buf.definition() -- 2. Jump to definition in the new split
             vim.cmd("normal! zz")
         end, opts)
         vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
